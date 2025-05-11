@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EV Station Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCstnKmXA35a6b1-cpx3ZWYaOS14Va1GAI",
+      authDomain: "evsm-7a414.firebaseapp.com",
+      databaseURL: "https://evsm-7a414-default-rtdb.firebaseio.com",
+      projectId: "evsm-7a414",
+      storageBucket: "evsm-7a414.firebasestorage.app",
+      messagingSenderId: "142372972872",
+      appId: "1:142372972872:web:76204d2a51f90493e2ab7d",
+      measurementId: "G-9P7D6H2FN4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    db.ref('EV/Slot1').on('value', (snapshot) => {
+      const data = snapshot.val();
+      document.getElementById("slot1-voltage").textContent = `${data.Voltage} V`;
+      document.getElementById("slot1-soc").textContent = `${data.SOC} %`;
+      const badge = document.getElementById("slot1-detect-badge");
+      badge.textContent = data.Detected ? "✔ Detected" : "✖ No Vehicle";
+      badge.className = `badge ${data.Detected ? 'green' : 'red'}`;
+    });
+
+    db.ref('EV/Slot2').on('value', (snapshot) => {
+      const data = snapshot.val();
+      document.getElementById("slot2-voltage").textContent = `${data.Voltage} V`;
+      document.getElementById("slot2-soc").textContent = `${data.SOC} %`;
+      const badge = document.getElementById("slot2-detect-badge");
+      badge.textContent = data.Detected ? "✔ Detected" : "✖ No Vehicle";
+      badge.className = `badge ${data.Detected ? 'green' : 'red'}`;
+    });
+
+    db.ref('EV/QueueCount').on('value', (snapshot) => {
+      document.getElementById("queue-count").textContent = snapshot.val();
+    });
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #eef4fa;
+      color: #1a1a1a;
+    }
+    .hero {
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(120deg, #007cf0, #00dfd8);
+      color: rgb(36, 32, 48);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      animation: fadeInDown 1s ease-in-out;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      margin: 0;
+      animation: slideIn 1.2s ease-in-out;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cards {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 80px;
+      padding: 2rem;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 24px;
+      width: 280px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .status, .queue {
+      text-align: center;
+      margin: 2rem;
+    }
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 1rem;
+    }
+    .badge {
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      color: white;
+    }
+    .badge.green {
+      background-color: #4CAF50;
+    }
+    .badge.red {
+      background-color: #F44336;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero">
+    <h1 id="hero-title"> EV Station Dashboard</h1>
+  </div>
+
+  <section class="cards">
+    <div class="card">
+      <h2>EV Slot 1</h2>
+      <p>Voltage: <span id="slot1-voltage">Loading...</span></p>
+      <p>State of Charge: <span id="slot1-soc">Loading...</span></p>
+    </div>
+    <div class="card">
+      <h2>EV Slot 2</h2>
+      <p>Voltage: <span id="slot2-voltage">Loading...</span></p>
+      <p>State of Charge: <span id="slot2-soc">Loading...</span></p>
+    </div>
+  </section>
+
+  <section class="status">
+    <h2>Vehicle Detection</h2>
+    <div class="badges">
+      <span id="slot1-detect-badge" class="badge">Loading...</span>
+      <span id="slot2-detect-badge" class="badge">Loading...</span>
+    </div>
+  </section>
+
+  <section class="queue">
+    <h2>Vehicles in Queue</h2>
+    <p>Currently waiting: <strong id="queue-count">Loading...</strong></p>
+  </section>
+</body>
+</html>
